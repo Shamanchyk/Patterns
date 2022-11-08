@@ -1,90 +1,63 @@
-interface InMcMenu{
-    hamburger(): void;
-    potato(): void;
-    water(): void;
-    iceCream?(): void;
-}
-
-
-class McMenu implements InMcMenu{
-
-    private mcMenu: OderMcMenu;
-
-    constructor(){
+"use strict";
+class McMenu {
+    constructor() {
         this.reset();
     }
-
-    public reset(): void {
+    reset() {
         this.mcMenu = new OderMcMenu();
     }
-
-    public hamburger(): void {
-        this.mcMenu.parts.push('Гамбургер')
+    hamburger() {
+        this.mcMenu.parts.push('Гамбургер');
     }
-
-    public potato(): void {
-        this.mcMenu.parts.push('Картопля')
+    potato() {
+        this.mcMenu.parts.push('Картопля');
     }
-
-    public water(): void {
-        this.mcMenu.parts.push('Напій')
+    water() {
+        this.mcMenu.parts.push('Напій');
     }
-
-    public iceCream?(): void {
-        this.mcMenu.parts.push('Морозиво')
+    iceCream() {
+        this.mcMenu.parts.push('Морозиво');
     }
-    
-    public getProduct(): OderMcMenu {
+    getProduct() {
         const result = this.mcMenu;
         this.reset();
         return result;
     }
-     
 }
-
-class OderMcMenu{
-    public parts: string[] = [];
-
-    public listParts(): void {
+class OderMcMenu {
+    constructor() {
+        this.parts = [];
+    }
+    listParts() {
         console.log(`Отже, ваше замовлення: ${this.parts.join(', ')}\n`);
     }
 }
-
 class Director {
-    private builder: InMcMenu;
-
-    public setBuilder(builder: InMcMenu): void {
+    setBuilder(builder) {
         this.builder = builder;
     }
-
-    public buildMinimalViableProduct(): void {
+    buildMinimalViableProduct() {
         this.builder.hamburger();
     }
-
-    public buildFullFeaturedProduct(): void {
+    buildFullFeaturedProduct() {
         this.builder.hamburger();
         this.builder.potato();
         this.builder.water();
     }
 }
-
-function clientCode(director: Director) {
+function clientCode(director) {
     const builder = new McMenu();
     director.setBuilder(builder);
-
     console.log('Вибрати лише гаммбургер:');
     director.buildMinimalViableProduct();
     builder.getProduct().listParts();
-
     console.log('Скласти повноцінне МакМеню:');
     director.buildFullFeaturedProduct();
     builder.getProduct().listParts();
-
     console.log('Складіть МакМеню на свій смак:');
     builder.hamburger();
     builder.iceCream();
     builder.getProduct().listParts();
 }
-
 const director = new Director();
-console.log(clientCode(director)); 
+console.log(clientCode(director));
