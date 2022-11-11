@@ -2,16 +2,16 @@ interface InMcMenu{
     hamburger(): void;
     potato(): void;
     water(): void;
-    iceCream?(): void;
+    iceCream(): void;
 }
 
 
 class McMenu implements InMcMenu{
 
-    private mcMenu: OderMcMenu;
+    public mcMenu: OderMcMenu;
 
     constructor(){
-        this.reset();
+        this.mcMenu = new OderMcMenu();
     }
 
     public reset(): void {
@@ -30,7 +30,7 @@ class McMenu implements InMcMenu{
         this.mcMenu.parts.push('Напій')
     }
 
-    public iceCream?(): void {
+    public iceCream(): void {
         this.mcMenu.parts.push('Морозиво')
     }
     
@@ -52,6 +52,10 @@ class OderMcMenu{
 
 class Director {
     private builder: InMcMenu;
+
+    constructor(builder: InMcMenu) {
+        this.builder = builder;
+    }
 
     public setBuilder(builder: InMcMenu): void {
         this.builder = builder;
