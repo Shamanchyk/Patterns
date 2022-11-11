@@ -3,7 +3,7 @@ interface McMenu{
     hamburger(): string;
     potato(): string;
     water(): string;
-    iceCream?(): string;
+    iceCream(): string;
 
 }
 
@@ -29,9 +29,9 @@ class OrderMcMenu implements McMenu{
 
 class Decorator implements McMenu{
 
-    protected mcMenu: mcMenu;
+    protected mcMenu: McMenu;
     
-    constructor(mcMenu: mcMenu) {
+    constructor(mcMenu: McMenu) {
         this.mcMenu = mcMenu;
     }
 
