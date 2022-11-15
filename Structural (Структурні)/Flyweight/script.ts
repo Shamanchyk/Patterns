@@ -1,70 +1,68 @@
-interface IFlyweight{
-
-    code: number;
-
-}
-
-class Flyweight implements IFlyweight{
-
-    code: number;
-
-    constructor(code: number){
-        this.code = code;
+class Flyweight {
+    private sharedState: any;
+    constructor(sharedState: any) {
+        this.sharedState = sharedState;
     }
 
+    // JSON.stringify()перетворює значення JavaScript на рядок JSON
+    public operation(uniqueState: string[]): void {
+        const shared = JSON.stringify(this.sharedState);
+        const unique = JSON.stringify(uniqueState);
+        console.log(`Flyweight:Displaying shared (${shared}) and unique (${unique}) state. `)
+    }
 }
 
-class FlyweightFactory{
 
-    static flyweights: { [id: number]: Flyweight } = {}
-
-    static getFlyweight(code: number): Flyweight{
-
-        if(!(code in FlyweightFactory.flyweights)) {
-
-            FlyweightFactory.flyweights[code] = new Flyweight(code);
-
-        }
-
-        return FlyweightFactory.flyweights[code]
-
-    }
-
-    static getCount(): number {
-
-        return Object.keys(FlyweightFactory.flyweights).length
-
-    }
-
-}
-
-class AppContext {
-
-    private codes: number[] = []
-
-    constructor(codes: string) {
-        for (let i = 0; i < codes.length; i++) {
-            this.codes.push(codes.charCodeAt(i))
+class McFactory {
+    private flyweights: { [key: string]: Flyweight } = <any>{};
+    constructor(initialFlyweights: string[][]) {
+        for (const state of initialFlyweights) {
+            this.flyweights[this.getKey(state)] = new Flyweight(state);
         }
     }
 
-    output() {
+    private getKey(state: string[]): string{
+        return state.join('_')
+    }
 
-        let ret = ''
-        this.codes.forEach((c) => {
-            ret =
-                ret +
-                String.fromCharCode(FlyweightFactory.getFlyweight(c).code)
-        })
+    public getFlyweight(sharedState: string[]): Flyweight {
+        const key = this.getKey(sharedState);
+        if (!(key in this.flyweights)) {
+            console.log('McFactory: Can\'t find a flyweight, creating new one.');
+            this.flyweights[key] = new Flyweight(sharedState);
+        } else {
+            console.log('McFactory: Reusing existing flyweight.');
+        }
+        return this.flyweights[key];
+    }
 
-        return ret
+    // Object.keys повертає масив імен властивостей даного об'єкта
+    public listFlyweights(): void {
+        const count = Object.keys(this.flyweights).length;
+        console.log(`\nMcFactory: I have ${count} flyweights:`);
+        for (const key in this.flyweights) {
+            console.log(key);
+        }
     }
 }
 
+const mcFactory = new McFactory([
+    ['БігМак', 'Велика картопля', 'Coca-cola'],
+    ['Чізбургер', 'Маленька картопля', 'Pepsi'],
+    ['БігТейсті','Середня картопля', 'Sprite'],
+]);
 
+mcFactory.listFlyweights();
 
-const APP_CONTEXT = new AppContext('abracadabra')
-console.log(APP_CONTEXT.output())
+function addToDatabase(mc: McFactory, order: string, ham: string, potato: string,
+    water: string) {
+    console.log('\nClient: Adding a McMenu to database.');
+    const flyweight = mc.getFlyweight([ham, potato, water]);
+    flyweight.operation([order]);
+}
 
-console.log(`abracadabra has ${'abracadabra'.length} letters`)
-console.log(`FlyweightFactory has ${FlyweightFactory.getCount()} flyweights`)
+addToDatabase(mcFactory, '111', 'Макчікен', 'Маленька картопля', 'Pepsi');
+addToDatabase(mcFactory, '122', 'Гамбургер', 'Велика картопля', 'Sprite');
+addToDatabase(mcFactory, '133', 'Макчікен', 'Маленька картопля', 'Pepsi');
+
+mcFactory.listFlyweights();
